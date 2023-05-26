@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model main_table {
+  id              Int          @id @default(autoincrement())
+  id_stand        Int
+  id_res_type     Int
+  res_name        String       @db.VarChar(255)
+  location        String       @db.VarChar(255)
+  create_date     DateTime?    @default(now()) @db.Timestamp(6)
+  end_date        DateTime     @db.Date
+  phone           String       @db.VarChar(255)
+  logo            String       @db.VarChar(255)
+  telephone       Int?
+  city            String?      @db.VarChar(255)
+  region          String?      @db.VarChar(255)
+  account_manager String?      @db.VarChar(255)
+  domain_name     String?      @db.VarChar(255)
+  comment         String?
+  background      String?      @db.VarChar(10)
+  font_color      String?      @db.VarChar(10)
+  theme           Int?         @default(1)
+  cost            String?      @db.VarChar(255)
+  sale            String?      @db.VarChar(255)
+  facebook        String?      @db.VarChar(255)
+  instagram       String?      @db.VarChar(255)
+  whatsapp        String?      @db.VarChar(255)
+  tiktok          String?      @db.VarChar(255)
+  status          Int?         @default(0)
+  customize       Int?
+  delivery        Boolean?     @default(false)
+  res_type        res_type     @relation(fields: [id_res_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  stand           stand        @relation(fields: [id_stand], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  menus           menus[]
+  order_          order_[]
+  table_          table_[]
+  user_group      user_group[]
+  voc             voc[]
+}
+
+model res_type {
+  id         Int          @id @default(autoincrement())
+  res_cat    String       @db.VarChar(255)
+  price      Int
+  des        String[]
+  notes      String       @db.VarChar(255)
+  main_table main_table[]
+}
+
+model stand {
+  id          Int          @id @default(autoincrement())
+  image_stand String       @db.VarChar(255)
+  name        String       @db.VarChar(255)
+  price       Int
+  des         String[]
+  main_table  main_table[]
+}
+
+model user_group {
+  id             Int         @id @default(autoincrement())
+  username       String      @unique @db.VarChar(255)
+  password       String      @db.VarChar(255)
+  id_res         Int?
+  user_type      String      @default("client") @db.VarChar(255)
+  submitted      Boolean?    @default(false)
+  stand_quantity Int
+  totalprice     Int?
+  main_table     main_table? @relation(fields: [id_res], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model menus {
+  id          Int        @id @default(autoincrement())
+  menu_ar     String     @db.VarChar(255)
+  menu_en     String     @db.VarChar(255)
+  menu_heb    String     @db.VarChar(255)
+  image       String     @db.VarChar(255)
+  id_res      Int
+  aranging    Int
+  status      Int        @default(1)
+  create_date DateTime   @default(now()) @db.Timestamp(6)
+  main_table  main_table @relation(fields: [id_res], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product     product[]
+}
+
+model product {
+  id            Int     @id @default(autoincrement())
+  product_ar    String
+  product_en    String
+  product_heb   String
+  des_ar        String
+  des_en        String
+  des_heb       String
+  price         String? @db.VarChar(255)
+  m             String  @db.VarChar(255)
+  l             String  @db.VarChar(255)
+  xl            String  @db.VarChar(255)
+  xxl           String  @db.VarChar(10)
+  id_menus      Int
+  image_product String  @db.VarChar(255)
+  aranging      Int
+  menus         menus   @relation(fields: [id_menus], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model order_ {
+  id         Int        @id @default(autoincrement())
+  id_res     Int
+  stand_q    String     @db.VarChar(255)
+  main_table main_table @relation(fields: [id_res], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model table_ {
+  id         Int        @id @default(autoincrement())
+  table_name Int
+  id_res     Int
+  main_table main_table @relation(fields: [id_res], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model voc {
+  voc_id     Int        @id @default(autoincrement())
+  id_res     Int
+  notes      String
+  main_table main_table @relation(fields: [id_res], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
